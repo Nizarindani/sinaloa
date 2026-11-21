@@ -1,160 +1,580 @@
-<html>
+<!DOCTYPE html>
+<html lang="es">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Cultura, tradiciones, historia, turismo y arqueología de Sinaloa.">
 <title>SINALOA</title>
+<style>
+  :root {
+    --arena: #c8bd8a;
+    --arena-oscuro: #8a7f4c;
+    --negro: #000;
+    --azul: #b6d6e5;
+    --azul-fuerte: #8bbcd3;
+    --texto: #1b1b1b;
+    --blanco: #fff;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--texto);
+    background: var(--blanco);
+    line-height: 1.55;
+  }
+
+  /* ---------- Barra superior ---------- */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--negro);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+  .logo {
+    background: var(--arena);
+    color: var(--blanco);
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    font-weight: bold;
+    text-decoration: none;
+    padding: 6px 28px;
+    display: flex;
+    align-items: center;
+    transition: background .25s;
+  }
+  .logo:hover, .logo:focus-visible { background: var(--arena-oscuro); }
+  nav { flex: 1; display: flex; flex-wrap: wrap; }
+  nav a {
+    flex: 1;
+    min-width: 110px;
+    color: var(--blanco);
+    text-decoration: none;
+    text-align: center;
+    padding: 16px 10px;
+    font-size: 1rem;
+    border-bottom: 4px solid transparent;
+    transition: background .25s, color .25s, border-color .25s;
+  }
+  nav a:hover, nav a:focus-visible {
+    background: var(--arena);
+    color: var(--negro);
+    border-bottom-color: var(--azul);
+  }
+  .buscador {
+    display: flex;
+    align-items: center;
+    padding: 6px 14px;
+    background: #111;
+    flex: 0 0 100%;
+  }
+  .buscador label { color: var(--blanco); margin-right: 10px; white-space: nowrap; }
+  .buscador input {
+    flex: 1;
+    padding: 9px 12px;
+    font-size: 1rem;
+    border: 2px solid var(--arena);
+    border-radius: 4px;
+    background: var(--blanco);
+  }
+  .buscador input:focus { outline: 3px solid var(--azul); }
+  .buscador button {
+    margin-left: 8px;
+    padding: 9px 14px;
+    border: 0;
+    border-radius: 4px;
+    background: var(--arena);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background .25s;
+  }
+  .buscador button:hover { background: var(--azul); }
+
+  /* ---------- Contenido ---------- */
+  .contenido {
+    display: grid;
+    grid-template-columns: minmax(240px, 37%) 1fr;
+    gap: 28px;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 0 40px;
+  }
+  .portada { position: relative; }
+  .carrusel {
+    position: sticky;
+    top: 130px;
+    width: 100%;
+    height: calc(100vh - 140px);
+    max-height: 1030px;
+    overflow: hidden;
+    background: var(--negro);
+  }
+  .slide {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    transition: opacity .6s;
+  }
+  .slide.activa { opacity: 1; }
+  .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .6s;
+  }
+  .carrusel:hover .slide.activa img { transform: scale(1.05); }
+  .slide figcaption {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 40px 70px 18px;
+    color: var(--blanco);
+    font-size: 1.1rem;
+    background: linear-gradient(transparent, rgba(0, 0, 0, .75));
+  }
+  .flecha {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, .6);
+    color: var(--blanco);
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .25s, transform .25s;
+  }
+  .flecha:hover, .flecha:focus-visible { background: var(--arena-oscuro); transform: translateY(-50%) scale(1.1); }
+  .flecha.ant { left: 12px; }
+  .flecha.sig { right: 12px; }
+  .puntos {
+    position: absolute;
+    left: 0; right: 0; bottom: 8px;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+  .puntos button {
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    border: 2px solid var(--blanco);
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+  }
+  .puntos button.activa { background: var(--arena); }
+
+  main { padding: 24px 24px 0 0; }
+  .intro { font-size: 1.1rem; margin: 0 0 8px; }
+
+  section { scroll-margin-top: 130px; margin-top: 28px; }
+  section h2 {
+    margin: 0 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 4px solid var(--arena);
+    font-size: 1.5rem;
+  }
+
+  .tarjeta {
+    display: grid;
+    grid-template-columns: 180px 1fr auto;
+    gap: 18px;
+    align-items: center;
+    background: var(--azul);
+    padding: 14px;
+    margin-bottom: 16px;
+    border-radius: 6px;
+    transition: transform .25s, box-shadow .25s, background .25s;
+  }
+  .tarjeta:hover {
+    transform: translateY(-4px);
+    background: var(--azul-fuerte);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, .25);
+  }
+  .tarjeta .foto { overflow: hidden; border-radius: 4px; }
+  .tarjeta img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    display: block;
+    transition: transform .4s;
+  }
+  .tarjeta:hover img { transform: scale(1.12); }
+  .tarjeta h3 { margin: 0 0 6px; font-family: Georgia, serif; font-size: 1.35rem; }
+  .tarjeta p { margin: 0; font-size: .98rem; }
+  .tarjeta a.mas {
+    color: var(--negro);
+    font-weight: bold;
+    padding: 8px 12px;
+    border: 2px solid var(--negro);
+    border-radius: 4px;
+    text-decoration: none;
+    text-align: center;
+    transition: background .25s, color .25s;
+  }
+  .tarjeta a.mas:hover, .tarjeta a.mas:focus-visible { background: var(--negro); color: var(--blanco); }
+
+  .tarjeta.sin-foto { grid-template-columns: 1fr; }
+  .tarjeta.sin-foto > div:empty, .tarjeta.sin-foto > span:empty { display: none; }
+
+  mark { background: #ffe066; padding: 0 2px; }
+  .oculto { display: none !important; }
+  #sin-resultados {
+    display: none;
+    background: #fff3cd;
+    padding: 14px;
+    border-radius: 6px;
+    margin-top: 20px;
+  }
+
+  /* ---------- Botón de inicio ---------- */
+  #btn-inicio {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 200;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 30px;
+    background: var(--negro);
+    color: var(--blanco);
+    font-size: 1rem;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity .3s, transform .3s, background .25s;
+  }
+  #btn-inicio.visible { opacity: 1; pointer-events: auto; transform: none; }
+  #btn-inicio:hover, #btn-inicio:focus-visible { background: var(--arena-oscuro); }
+
+  footer { background: var(--negro); color: var(--blanco); text-align: center; padding: 16px; font-size: .9rem; }
+
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+
+  /* ---------- Celulares y tabletas ---------- */
+  @media (max-width: 900px) {
+    .contenido { grid-template-columns: 1fr; gap: 0; }
+    .carrusel { position: relative; top: auto; height: 280px; }
+    .slide figcaption { padding: 30px 60px 26px; font-size: 1rem; }
+    main { padding: 16px; }
+    section, .tarjeta { scroll-margin-top: 170px; }
+    section { scroll-margin-top: 170px; }
+  }
+  @media (max-width: 600px) {
+    nav a { min-width: 33%; padding: 12px 6px; font-size: .9rem; }
+    .logo { flex: 0 0 100%; justify-content: center; }
+    .buscador label { display: none; }
+    .tarjeta { grid-template-columns: 1fr; text-align: left; }
+    .tarjeta img { height: 180px; }
+    .tarjeta a.mas { display: block; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+</style>
 </head>
-<body bgcolor="white" >
+<body id="inicio">
 
-<table width="100%" border="0">
-    <tr bgcolor=black>
-        <td width="26%" bgcolor="#c8bd8a">
-            <font face="Arial" size="7" color="white">SINALOA</font>
-        </td>
+<header>
+  <a class="logo" href="#inicio">SINALOA</a>
+  <nav aria-label="Menú principal">
+    <a href="#cultura">CULTURA</a>
+    <a href="#tradiciones">TRADICIONES</a>
+    <a href="#historia">HISTORIA</a>
+    <a href="#turismo">TURISMO</a>
+    <a href="#arqueologia">ARQUEOLOGÍA</a>
+  </nav>
+  <div class="buscador" role="search">
+    <label for="busqueda">Buscar:</label>
+    <input type="search" id="busqueda" placeholder="Ej. aguachile, Cosalá, banda..." autocomplete="off">
+    <button type="button" id="limpiar">Limpiar</button>
+  </div>
+</header>
 
+<div class="contenido">
+  <div class="portada">
+    <div class="carrusel" role="region" aria-roledescription="carrusel" aria-label="Imágenes de Sinaloa">
+      <figure class="slide activa">
+        <img src="bailarina.png" alt="Bailarina con vestuario tradicional de Sinaloa">
+        <figcaption>Danza tradicional de Sinaloa</figcaption>
+      </figure>
+      <figure class="slide">
+        <img src="cosala.png" alt="Calles y casas de Cosalá, Pueblo Mágico">
+        <figcaption>Cosalá, Pueblo Mágico</figcaption>
+      </figure>
+      <figure class="slide">
+        <img src="mayo.png" alt="Integrantes de la comunidad Mayo">
+        <figcaption>Comunidad Mayo</figcaption>
+      </figure>
+      <figure class="slide">
+        <img src="banda.png" alt="Banda sinaloense tocando con tubas y trombones">
+        <figcaption>Banda sinaloense</figcaption>
+      </figure>
+      <figure class="slide">
+        <img src="aguachile.png" alt="Plato de aguachile con camarones">
+        <figcaption>El aguachile</figcaption>
+      </figure>
+      <figure class="slide">
+        <img src="malecon.jpg" alt="Malecón de Mazatlán frente al mar">
+        <figcaption>Malecón de Mazatlán</figcaption>
+      </figure>
+      <figure class="slide">
+        <img src="faro.jpg" alt="Faro de Mazatlán sobre el cerro del Crestón">
+        <figcaption>Faro de Mazatlán</figcaption>
+      </figure>
+      <figure class="slide">
+        <img src="carnaval.jpg" alt="Desfile del Carnaval de Mazatlán">
+        <figcaption>Carnaval de Mazatlán</figcaption>
+      </figure>
+      <figure class="slide">
+        <img src="catedral.jpg" alt="Catedral Basílica de Culiacán">
+        <figcaption>Catedral de Culiacán</figcaption>
+      </figure>
+      <figure class="slide">
+        <img src="elfuerte.jpg" alt="Plaza y calles de El Fuerte, Pueblo Mágico">
+        <figcaption>El Fuerte, Pueblo Mágico</figcaption>
+      </figure>
+      <figure class="slide">
+        <img src="labradas.jpg" alt="Petroglifos de Las Labradas junto al mar">
+        <figcaption>Petroglifos de Las Labradas</figcaption>
+      </figure>
 
-        <td align="center"><font face="Arial" size="4" color="white">CULTURA</font></td>
+      <button type="button" class="flecha ant" aria-label="Imagen anterior">&#10094;</button>
+      <button type="button" class="flecha sig" aria-label="Imagen siguiente">&#10095;</button>
+      <div class="puntos" role="group" aria-label="Elegir imagen"></div>
+    </div>
+  </div>
 
-        <td align="center">
-            <font face="Arial" size="4" color="white">TRADICIONES</font>
-        </td>
+  <main>
+    <p class="intro">
+      Sinaloa ocupa un lugar de la mayor importancia dentro de la geografía mexicana.
+      Lo más sabido es que su conjunción de costas, valles y serranía le dotan de una
+      variada y potente vocación productiva, pero es también una región donde la cultura
+      y el arte se despliegan de manera cotidiana.
+    </p>
 
-        <td align="center">
-            <font face="Arial" size="4" color="white">HISTORIA</font>
-        </td>
+    <p id="sin-resultados" role="status">No encontramos resultados. Prueba con otra palabra, por ejemplo “banda” o “Cosalá”.</p>
 
-        <td align="center">
-            <font face="Arial" size="4" color="white">TURISMO</font>
-        </td>
-        <td align="center">
-            <font face="Arial" size="4" color="white">ARQUEOLOGÍA</font>
-        </td>
-    </tr>
-</table>
+    <section id="cultura">
+      <h2>Cultura</h2>
 
-<table width="100%" border="0">
-        <td width="37%" align="center">
-            <img src="bailarina.png" width="100%" height="1030">
-        </td>
+      <article class="tarjeta">
+        <div class="foto"><img src="mayo.png" alt="Integrantes de la comunidad Mayo" loading="lazy"></div>
+        <div>
+          <h3>Comunidad Mayo</h3>
+          <p>El Pueblo Mayo habita en el noroeste de México, al sur del estado de Sonora y al norte de Sinaloa. En Sinaloa, sus comunidades se localizan en los municipios de Ahome, El Fuerte y Guasave. La lengua yoreme que habla el Pueblo Mayo forma parte de la familia yuto-azteca.</p>
+        </div>
+        <a class="mas" href="https://www-indigenousmexico-org.translate.goog/articles/the-original-indigenous-people-of-sinaloa?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc" target="_blank" rel="noopener">Más comunidades indígenas</a>
+      </article>
 
-        <td width="63%" bgcolor="white">
+      <article class="tarjeta">
+        <div class="foto"><img src="banda.png" alt="Banda sinaloense tocando con tubas y trombones" loading="lazy"></div>
+        <div>
+          <h3>Banda sinaloense</h3>
+          <p>Es quizás el símbolo cultural más reconocido de Sinaloa. La banda (con tubas, trombones, clarinetes y percusión) nació en Mazatlán y El Fuerte a finales del siglo XIX, con fuerte influencia de bandas militares alemanas. Hoy es un fenómeno que trasciende fronteras.</p>
+        </div>
+        <a class="mas" href="https://www.lifeder.com/tradiciones-costumbres-de-sinaloa/" target="_blank" rel="noopener">Más tradiciones</a>
+      </article>
+    </section>
 
-            <table width="95%"  border="0" >
-                <tr>
-                    <td>
-                        <font face="Arial" size="4">
-                            Sinaloa ocupa un lugar de la mayor importancia dentro de la geografía mexicana.
-                            Lo más sabido es que su conjunción de costas, valles y serranía le dotan de una
-                            variada y potente vocación productiva, pero es también una región donde la cultura
-                            y el arte se despliegan de manera cotidiana.
-                        </font>
-                    </td>
-                </tr>
-            </table>
+    <section id="tradiciones">
+      <h2>Tradiciones</h2>
 
-            <br>
+      <article class="tarjeta">
+        <div class="foto"><img src="aguachile.png" alt="Plato de aguachile con camarones" loading="lazy"></div>
+        <div>
+          <h3>El Aguachile</h3>
+          <p>El platillo más representativo de Sinaloa, un manjar de mariscos que celebra la frescura y la cercanía al océano. Los orígenes del aguachile se remontan a la sierra de Sinaloa, donde en sus inicios se preparaba con carne machacada en agua hirviendo a la que se le agregaban algunos chiles chiltepin con los que se le daba un toque picoso.</p>
+        </div>
+        <a class="mas" href="https://artsandculture.google.com/story/vgVB3MfxS9OkIQ?hl=es-419" target="_blank" rel="noopener">Más gastronomía</a>
+      </article>
+    </section>
 
-           
-            <table width="90%" border="0"  bgcolor="#b6d6e5">
-                <tr>
-                    <td width="25%" align="center">
-                        <img src="cosala.png" width="160" height="130">
-                    </td>
-                    <td>
-                        <font face="Arial" size="5">Cosalá</font>
-                        <br><br>
-                        <font face="Arial" size="3">
-                            Cosalá, un Pueblo Mágico en la Sierra Madre Oriental, destaca por su rica historia
-                            minera y su belleza natural. Fundado en 1562, ofrece atractivos como una vegetación
-                            exuberante, sus festividades, gastronomía y artesanía, como la talabartería y alfarería,
-                            que reflejan la fusión de tradiciones prehispánicas y españolas, convirtiéndolo en un
-                            destino único lleno de historia y cultura.
-                        </font>
-                    </td>
-                    <td width="20%" align="center">
-                         <a href="https://pueblosmagicos.mexicodesconocido.com.mx/sinaloa/"<font face="Arial" size="3">Más pueblos mágicos</font></a>
-                        <br><br>
-                    </td>
-                </tr>
-            </table>
+    <section id="historia">
+      <h2>Historia</h2>
 
-            <br>
+      <article class="tarjeta sin-foto">
+        <div></div>
+        <div>
+          <h3>Un territorio de minas, puertos y valles</h3>
+          <p>La historia de Sinaloa une a los pueblos originarios que habitaban la región con la llegada de los españoles en el siglo XVI, la fundación de villas mineras como Cosalá en 1562 y el desarrollo posterior de sus puertos y valles agrícolas. <em></em></p>
+        </div>
+        <span></span>
+      </article>
+    </section>
 
-            <table width="90%"   bgcolor="#b6d6e5">
-                <tr>
-                    <td width="25%" align="center">
-                        <img src="mayo.png" width="160" height="130">
-                    </td>
-                    <td>
-                        <font face="Georgia" size="5">Comunidad Mayo</font>
-                        <br><br>
-                        <font face="Arial" size="3">
-                            El Pueblo Mayo habita en el noroeste de México, al sur del estado de Sonora y al norte
-                            de Sinaloa. En Sinaloa, sus comunidades se localizan en los municipios de Ahome, El
-                            Fuerte y Guasave. La lengua yoreme que habla el Pueblo Mayo forma parte de la familia
-                            yuto-azteca.
-                        </font>
-                    </td>
-                    <td width="20%" align="center">
-                       <a href="https://www-indigenousmexico-org.translate.goog/articles/the-original-indigenous-people-of-sinaloa?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc"
- <font face="Georgia" size="3">Más comunidades indígenas</font> </a>
-                        <br><br>
-       
-                    </td>
-                </tr>
-            </table>
+    <section id="turismo">
+      <h2>Turismo</h2>
 
-            <br>
+      <article class="tarjeta">
+        <div class="foto"><img src="cosala.png" alt="Calles y casas de Cosalá, Pueblo Mágico" loading="lazy"></div>
+        <div>
+          <h3>Cosalá</h3>
+          <p>Cosalá, un Pueblo Mágico en la Sierra Madre Occidental, destaca por su rica historia minera y su belleza natural. Fundado en 1562, ofrece atractivos como una vegetación exuberante, sus festividades, gastronomía y artesanía, como la talabartería y alfarería, que reflejan la fusión de tradiciones prehispánicas y españolas, convirtiéndolo en un destino único lleno de historia y cultura.</p>
+        </div>
+        <a class="mas" href="https://pueblosmagicos.mexicodesconocido.com.mx/sinaloa/" target="_blank" rel="noopener">Más pueblos mágicos</a>
+      </article>
+    </section>
 
-            <table width="90%"  border="0" bgcolor="#b6d6e5">
-                <tr>
-                    <td width="25%" align="center">
-                        <img src="banda.png" width="160" height="130">
-                    </td>
-                    <td>
-                        <font face="Georgia" size="5">Banda sinaloense</font>
-                        <br><br>
-                        <font face="Arial" size="3">
-                            Es quizás el símbolo cultural más reconocido de Sinaloa. La banda (con tubas,
-                            trombones, clarinetes y percusión) nació en Mazatlán y El Fuerte a finales del siglo XIX,
-                            con fuerte influencia de bandas militares alemanas. Hoy es un fenómeno que trasciende
-                            fronteras.
-                        </font>
-                    </td>
-                    <td width="20%" align="center">
-                       <a href="https://www.lifeder.com/tradiciones-costumbres-de-sinaloa/" <font face="Georgia" size="3">Más tradiciones</font> </a>
-                        <br><br>
+    <section id="arqueologia">
+      <h2>Arqueología</h2>
 
-                    </td>
-                </tr>
-            </table>
+      <article class="tarjeta sin-foto">
+        <div></div>
+        <div>
+          <h3>Huellas de los primeros pobladores</h3>
+          <p>Sinaloa conserva vestigios de sus antiguos habitantes, como los petroglifos de Las Labradas, en la costa, y los sitios arqueológicos del sur del estado, como Chametla. <em></em></p>
+        </div>
+        <span></span>
+      </article>
+    </section>
+  </main>
+</div>
 
-            <br>
+<button type="button" id="btn-inicio" aria-label="Volver al inicio de la página">↑ Inicio</button>
 
-         
-            <table width="90%"  border="0" bgcolor="#b6d6e5">
-                <tr>
-                    <td width="25%" align="center">
-                        <img src="aguachile.png" width="160" height="130">
-                    </td>
-                    <td>
-                        <font face="Georgia" size="5">El Aguachile</font>
-                        <br><br>
-                        <font face="Arial" size="3">
-                            El platillo más representativo de Sinaloa, un manjar de mariscos que celebra la frescura
-                            y la cercanía al océano. Los orígenes del aguachile se remontan a la sierra de Sinaloa,
-                            donde en sus inicios se preparaba con carne machacada en agua hirviendo a la que se le
-                            agregaban algunos chiles chiltepin con los que se le daba un toque picoso.
-                        </font>
-                    </td>
-                    <td width="20%" align="center">
-                      <a href="https://artsandculture.google.com/story/vgVB3MfxS9OkIQ?hl=es-419" <font face="Arial" size="3">Más gastronomía</font></a>
+<script>
+  // ----- Buscador -----
+  var input = document.getElementById('busqueda');
+  var tarjetas = document.querySelectorAll('.tarjeta');
+  var secciones = document.querySelectorAll('main section');
+  var aviso = document.getElementById('sin-resultados');
 
-                        <br><br>
- </td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
+  function normalizar(t) {
+    return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
 
+  // Guarda el HTML original para poder quitar el resaltado
+  tarjetas.forEach(function (t) {
+    t.querySelectorAll('h3, p').forEach(function (el) { el.dataset.original = el.innerHTML; });
+  });
+
+  function resaltar(el, consulta) {
+    el.innerHTML = el.dataset.original;
+    if (!consulta) return;
+    var texto = el.innerHTML;
+    var plano = normalizar(texto);
+    var salida = '', i = 0, enTag = false;
+    // Recorre el texto sin tocar las etiquetas HTML
+    while (i < texto.length) {
+      if (texto[i] === '<') enTag = true;
+      if (!enTag && plano.substr(i, consulta.length) === consulta) {
+        salida += '<mark>' + texto.substr(i, consulta.length) + '</mark>';
+        i += consulta.length;
+        continue;
+      }
+      if (texto[i] === '>') enTag = false;
+      salida += texto[i];
+      i++;
+    }
+    el.innerHTML = salida;
+  }
+
+  function buscar() {
+    var consulta = normalizar(input.value.trim());
+    var hay = 0;
+
+    tarjetas.forEach(function (t) {
+      var coincide = !consulta || normalizar(t.textContent).indexOf(consulta) !== -1;
+      t.classList.toggle('oculto', !coincide);
+      if (coincide) hay++;
+      t.querySelectorAll('h3, p').forEach(function (el) { resaltar(el, consulta); });
+    });
+
+    secciones.forEach(function (s) {
+      var visibles = s.querySelectorAll('.tarjeta:not(.oculto)').length;
+      s.classList.toggle('oculto', visibles === 0);
+    });
+
+    aviso.style.display = (consulta && hay === 0) ? 'block' : 'none';
+  }
+
+  input.addEventListener('input', buscar);
+  document.getElementById('limpiar').addEventListener('click', function () {
+    input.value = '';
+    buscar();
+    input.focus();
+  });
+
+  // ----- Carrusel -----
+  (function () {
+    var carrusel = document.querySelector('.carrusel');
+    var contPuntos = carrusel.querySelector('.puntos');
+    var slides, puntos, actual = 0;
+
+    function construir() {
+      slides = carrusel.querySelectorAll('.slide');
+      contPuntos.innerHTML = '';
+      slides.forEach(function (_, i) {
+        var p = document.createElement('button');
+        p.type = 'button';
+        p.setAttribute('aria-label', 'Ir a la imagen ' + (i + 1));
+        p.addEventListener('click', function () { mostrar(i); });
+        contPuntos.appendChild(p);
+      });
+      puntos = contPuntos.querySelectorAll('button');
+      var multiples = slides.length > 1;
+      carrusel.querySelector('.ant').style.display = multiples ? '' : 'none';
+      carrusel.querySelector('.sig').style.display = multiples ? '' : 'none';
+      mostrar(Math.min(actual, slides.length - 1));
+    }
+
+    function mostrar(n) {
+      actual = (n + slides.length) % slides.length;
+      slides.forEach(function (s, i) { s.classList.toggle('activa', i === actual); });
+      puntos.forEach(function (p, i) { p.classList.toggle('activa', i === actual); });
+    }
+
+    // Si una imagen no existe todavía, se quita del carrusel
+    carrusel.querySelectorAll('.slide img').forEach(function (img) {
+      function quitar() {
+        var fig = img.closest('.slide');
+        if (fig && fig.parentNode) { fig.parentNode.removeChild(fig); construir(); }
+      }
+      img.addEventListener('error', quitar);
+      if (img.complete && img.naturalWidth === 0) quitar();
+    });
+
+    carrusel.querySelector('.ant').addEventListener('click', function () { mostrar(actual - 1); });
+    carrusel.querySelector('.sig').addEventListener('click', function () { mostrar(actual + 1); });
+
+    carrusel.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') mostrar(actual - 1);
+      if (e.key === 'ArrowRight') mostrar(actual + 1);
+    });
+
+    var inicioX = null;
+    carrusel.addEventListener('touchstart', function (e) { inicioX = e.touches[0].clientX; }, { passive: true });
+    carrusel.addEventListener('touchend', function (e) {
+      if (inicioX === null) return;
+      var dx = e.changedTouches[0].clientX - inicioX;
+      if (Math.abs(dx) > 40) mostrar(actual + (dx < 0 ? 1 : -1));
+      inicioX = null;
+    });
+
+    construir();
+  })();
+
+  // ----- Botón de inicio -----
+  var btn = document.getElementById('btn-inicio');
+  window.addEventListener('scroll', function () {
+    btn.classList.toggle('visible', window.scrollY > 300);
+  });
+  btn.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
 </body>
 </html>
